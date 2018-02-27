@@ -108,6 +108,7 @@ message_reader.start()
 
 #events = threading.Thread(target=events, name="What happend?", args=(), daemon=True)
 #events.start()
+#Врменно не работает
 
 while True:
     pass
