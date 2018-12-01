@@ -4,6 +4,14 @@ import json
 import time
 import threading
 import requests
+from subs import create_subscription_gif
+
+# todo Новых эфектов (рандомные пиксели, рисующая окружность, волновой алгоритм)
+# todo Редирект сообщений с GoodGame
+# todo Слово "Подписался" при подписке
+
+
+FONT = "fonts/Monserga-regular-FFP.ttf"
 
 
 class TestLog:
@@ -12,10 +20,10 @@ class TestLog:
             private_data = []
             for line in file:
                 private_data.append(line)
-        self.username = private_data[0]
-        self.client_id = private_data[1]
-        self.token = private_data[2]
-        self.channel = private_data[3]
+        self.username = private_data[0].replace("\n", "")
+        self.client_id = private_data[1].replace("\n", "")
+        self.token = private_data[2].replace("\n", "")
+        self.channel = private_data[3].replace("\n", "")
 
 
 def read_from_file(filename):
@@ -69,6 +77,7 @@ def income_message():
                     if cmd[msg][0] == "No":
                         username = ""
                     send_chat_msg(username + " " + cmd[msg][1])
+                    # send_chat_msg(username + " " + cmd[msg][1])
 
 
 def announcer():
@@ -93,6 +102,7 @@ def events():
             with open("cursor.txt", 'w') as f:
                 f.write(cursor)
             name = a["follows"][0]["user"]["display_name"]
+            create_subscription_gif(name, FONT, 250, 800)
             send_chat_msg("@Bandar_ban, " + name + " подписался!\n")
 
 
@@ -106,9 +116,8 @@ announce.start()
 message_reader = threading.Thread(target=income_message, name="Msg reader", args=(), daemon=True)
 message_reader.start()
 
-#events = threading.Thread(target=events, name="What happend?", args=(), daemon=True)
-#events.start()
-#Врменно не работает
+event_handler = threading.Thread(target=events, name="Event parser", daemon=True)
+event_handler.start()
 
 while True:
     pass
