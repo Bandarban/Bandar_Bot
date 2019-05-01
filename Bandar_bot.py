@@ -11,7 +11,7 @@ from subs import create_subscription_gif
 # todo Слово "Подписался" при подписке
 
 
-FONT = "fonts/Monserga-regular-FFP.ttf"
+FONT = "fonts/VastShadow-Regular.ttf"
 
 
 class TestLog:
@@ -88,22 +88,33 @@ def announcer():
 
 def events():
     with open("cursor.txt", 'r') as f:
-        cursor = f.read()
+        last_follower_name = f.readline().replace("\n", "")
     while True:
-        time.sleep(1)
-        r = requests.get(
-            "https://api.twitch.tv/kraken/channels/bandar_ban/follows?client_id=" + TestLog.client_id + "&limit=1&direction=asc&cursor=" + str(
-                cursor))
-        r = (r.text)
-        a = json.JSONDecoder().decode(r)
-        # print(a)
-        if a["_total"] != 0:
-            cursor = a["_cursor"]
+
+        response = requests.get(url=f"https://api.twitch.tv/helix/users/follows?to_id=132946765",
+                                headers={"Client-ID": TestLog.client_id})
+        response = response.text
+
+        followers_json = json.JSONDecoder().decode(response)
+        print(followers_json)
+
+        if len(followers_json["data"]) != 0:
+            if followers_json["data"][0]["from_name"] == last_follower_name:
+                time.sleep(120)
+                continue
+            else:
+                for follower_data in followers_json["data"]:
+                    name = follower_data["from_name"]
+                    if name == last_follower_name:
+                        break
+                    create_subscription_gif(text=name, font_path=FONT,  image_size=(800, 255))
+                    send_chat_msg(message="@Bandar_ban, " + name + " подписался!\n")
+
+            last_follower_name = followers_json["data"][0]["from_name"]
+
             with open("cursor.txt", 'w') as f:
-                f.write(cursor)
-            name = a["follows"][0]["user"]["display_name"]
-            create_subscription_gif(name, FONT, 250, 800)
-            send_chat_msg("@Bandar_ban, " + name + " подписался!\n")
+                f.write(last_follower_name)
+            time.sleep(120)
 
 
 TestLog = TestLog()
