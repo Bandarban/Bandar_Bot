@@ -2,10 +2,9 @@
 import math
 import random
 import time
-import copy
 import moviepy.editor as mpy
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont, GifImagePlugin
+from PIL import Image, ImageDraw, ImageFont
 import cv2
 import colorsys
 
@@ -44,7 +43,7 @@ def add_chromakey(bbox_image: Image.Image, box_size: tuple) -> Image:
     # Создание текста
     y_offset = int(bbox_image.height / 2)
     x_offset = int(bbox_image.width / 2)
-    # # Нанесение текста на фон
+    # Нанесение текста на фон
     color = colorsys.hsv_to_rgb(random.random(), 1, 1)
     color = tuple(map(lambda x: int(x * 255), color))
     ImageDraw.Draw(background).bitmap((box_size[0] / 2 - x_offset, box_size[1] / 2 - y_offset), bbox_image,
@@ -68,7 +67,6 @@ def draw_circle(current_image: Image.Image,
     :param density: Плотность закрашивания.
     :return:
     """
-    # color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
     for x, y in get_circle_points(coordinate, radius):
         if random.random() <= density and x <= current_image.width and y <= current_image.height:
             try:
@@ -79,7 +77,6 @@ def draw_circle(current_image: Image.Image,
                     if pixel_color != (0, 255, 0):
                         current_image.putpixel((x, y), value=pixel_color)
             except IndexError:
-                # print(x, y)
                 pass
 
 
@@ -130,22 +127,16 @@ def get_background_frames(image_size: tuple) -> list:
 
     points = [(700, 100), (100, 150), (700, 150)]
 
-    frames = []
-    frames.append(np.array(current_image))
-    # random.shuffle(points)
+    frames = [np.array(current_image)]
     color = colorsys.hsv_to_rgb(random.random(), 1, 1)
     color = tuple(map(lambda x: int(x * 255), color))
-    print(color)
 
     for target in points:
         while position != target:
-            # draw_circle(current_image, position, radius=40, density=1, color=color)
             draw_circle(current_image, position, radius=40, density=0.45, color=color)
             draw_circle(current_image, position, radius=60, density=0.25, color=color)
             position = get_path(position, target, int(radius / 2))
             cv2_img = np.array(current_image)
-            # cv2.imshow("asd", cv2_img)
-            # cv2.waitKey(1)
             frames.append(cv2_img)
     return frames
 
@@ -157,7 +148,6 @@ def draw_text_frames(text_bitmap: Image.Image, background_image: Image.Image) ->
     :param background_image: изображение фона.
     :return: список кадров анимации.
     """
-    points = [(750, 200), (400, 50), (50, 125), (400, 170), (750, 50), (50, 200), (750, 125)]
     points = [(50, 200), (50, 50), (175, 200), (175, 50), (300, 200), (300, 50), (425, 200), (425, 50), (575, 200),
               (575, 50), (700, 200), (700, 50), (800, 200)]
     frames = []
@@ -168,8 +158,6 @@ def draw_text_frames(text_bitmap: Image.Image, background_image: Image.Image) ->
             draw_circle(background_image, position, radius=radius, density=1, bitmap=text_bitmap)
             position = get_path(position, target, int(radius / 2))
             cv2_img = np.array(background_image)
-            # cv2.imshow("asd", cv2_img)
-            # cv2.waitKey(1)
             frames.append(cv2_img)
     return frames
 
@@ -178,7 +166,6 @@ def render_gif(frames: list, duration: int, fps: int):
     frames = frames[::2]
     frames += [frames[-1]] * 200
     clip = mpy.ImageSequenceClip(frames, fps=fps, durations=1)
-    print(clip.duration)
     clip.write_gif("follower.gif", fps=fps, loop=0)
     time.sleep(clip.duration)
     clip = mpy.ImageSequenceClip(frames[0:1], fps=30, durations=10)
@@ -209,9 +196,6 @@ def create_subscription_gif(text: str, font_path: str, image_size: tuple) -> Non
     render_gif(frames, 5, 60)
 
 
-#font_path = "fonts/VastShadow-Regular.ttf"
-#create_subscription_gif("Bandar", "fonts/VastShadow-Regular.ttf", (800, 255))
-
-# get_text_bbox("Vasya", font_path, (800, 250))
-# cv2.imshow("asd", image)
-# cv2.waitKey()
+if __name__ == '__main__':
+    font_path = "fonts/VastShadow-Regular.ttf"
+    create_subscription_gif("Bandar", "fonts/VastShadow-Regular.ttf", (800, 255))
