@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 import socket
 import json.decoder
@@ -43,13 +44,19 @@ def get_private_data(filename: str) -> dict:
 
 
 def send_chat_msg(message):
+    """
+    Отправка сообщения в чат
+    :param message: текст сообщения
+    :return:
+    """
     string = f"PRIVMSG #{USER_DATA['channel']} : {message} \n"
     connection.send(bytes(string, "UTF-8"))
 
 
-def create_connection():
+def create_connection() -> socket.socket:
     """
-        TODO убрать хардкод
+    Функция присоединения к чату
+    :return: сокет
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(('irc.chat.twitch.tv', 6667))
@@ -57,7 +64,7 @@ def create_connection():
     channel = "NICK " + USER_DATA["channel"] + "\n"
     sock.send(bytes(passw, "UTF-8"))
     sock.send(bytes(channel, "UTF-8"))
-    sock.send(bytes("JOIN #bandar_ban\n", "UTF-8"))
+    sock.send(bytes(f"JOIN #{USER_DATA['channel']}\n", "UTF-8"))
     return sock
 
 
@@ -81,10 +88,10 @@ def income_message():
 
 
 def announcer():
-    # TODO Убрать костыли и хардкод
+    event_handler = chat_events.EventHandler(send_chat_msg)
     while True:
         time.sleep(3000)
-        send_chat_msg(cmd["!INFO"][1])
+        event_handler.message_handler("!info", "")
 
 
 def events():
@@ -125,7 +132,6 @@ def events():
 if __name__ == '__main__':
 
     USER_DATA = get_private_data("private_data.pickle")
-    print(USER_DATA["username"])
     connection = create_connection()
 
     announce = threading.Thread(target=announcer, name="My time thread", args=(), daemon=True)
