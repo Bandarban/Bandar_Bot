@@ -165,11 +165,11 @@ def draw_text_frames(text_bitmap: Image.Image, background_image: Image.Image) ->
 def render_gif(frames: list, duration: int, fps: int):
     frames = frames[::2]
     frames += [frames[-1]] * 200
+    frames.append(frames[0])
     clip = mpy.ImageSequenceClip(frames, fps=fps, durations=1)
-    clip.write_gif("follower.gif", fps=fps, loop=0)
+    clip.write_gif("follower.gif", fps=fps, loop=1)
     time.sleep(clip.duration)
-    clip = mpy.ImageSequenceClip(frames[0:1], fps=30, durations=10)
-    clip.write_gif("follower.gif", fps=30, loop=0)
+
 
 
 def bgr_to_rgb(image):
@@ -197,5 +197,6 @@ def create_subscription_gif(text: str, font_path: str, image_size: tuple) -> Non
 
 
 if __name__ == '__main__':
-    font_path = "fonts/VastShadow-Regular.ttf"
-    create_subscription_gif("Bandar", "fonts/VastShadow-Regular.ttf", (800, 255))
+    font_path = "../fonts/VastShadow-Regular.ttf"
+    create_subscription_gif("New one", font_path, (800, 255))
+

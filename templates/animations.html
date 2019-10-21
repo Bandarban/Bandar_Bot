@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Animations</title>
+</head>
+
+<body style="margin: 0px; background: #0e0e0e;">
+<div>
+    <img id="gif_box" style="-webkit-user-select: none;margin: auto;cursor: zoom-in;"
+         src="/gif"
+         width="800" height="255">
+</div>
+</body>
+<script>
+    let hash = '1';
+    function refresh_image() {
+        let xhr = new XMLHttpRequest();
+
+        // 2. Конфигурируем его: GET-запрос на URL 'phones.json'
+        xhr.open('GET', '/gif?hash=' + hash, true);
+
+        // 3. Отсылаем запрос
+        xhr.send();
+        xhr.onload = function () {
+            if (xhr.status === 304){
+                return;
+            }
+            let gif = document.getElementById("gif_box");
+            gif.setAttribute("display", "none");
+
+            let json = JSON.parse(xhr.response);
+            hash = json.hash;
+            gif.setAttribute("src", "data:image/gif;base64," + json.image);
+            gif.setAttribute("display", "block");
+        }
+
+    }
+    refresh_image();
+    setInterval(refresh_image, [5000]);
+</script>
+
+</html>

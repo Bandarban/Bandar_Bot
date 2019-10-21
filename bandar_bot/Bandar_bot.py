@@ -6,14 +6,14 @@ import json
 import time
 import threading
 import requests
-from subs import create_subscription_gif
+from animations.subs import create_subscription_gif
 import pickle
 import chat_events
 
 # todo Слово "Подписался" при подписке
 
 
-FONT = "fonts/VastShadow-Regular.ttf"
+FONT = "../fonts/VastShadow-Regular.ttf"
 
 
 def get_private_data(filename: str) -> dict:
@@ -129,11 +129,11 @@ def events():
             time.sleep(120)
 
 
-if __name__ == '__main__':
+USER_DATA = get_private_data("private_data.pickle")
+connection = create_connection()
 
-    USER_DATA = get_private_data("private_data.pickle")
-    connection = create_connection()
 
+def run_bot():
     announce = threading.Thread(target=announcer, name="My time thread", args=(), daemon=True)
     announce.start()
 
@@ -143,5 +143,6 @@ if __name__ == '__main__':
     event_handler = threading.Thread(target=events, name="Event parser", daemon=True)
     event_handler.start()
 
-    while True:
-        pass
+
+if __name__ == '__main__':
+    run_bot()

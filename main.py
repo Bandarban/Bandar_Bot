@@ -3,9 +3,6 @@ import irc.bot
 import requests
 
 
-
-
-
 class TwitchBot(irc.bot.SingleServerIRCBot):
     def __init__(self, username, client_id, token, channel):
         self.client_id = client_id
@@ -27,7 +24,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
     def on_welcome(self, c, e):
         print('Joining ' + self.channel)
-        #print("Test")
+        # print("Test")
 
         # You must request specific capabilities before you can use them
         c.cap('REQ', ':twitch.tv/membership')

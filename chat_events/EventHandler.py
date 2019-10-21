@@ -1,4 +1,4 @@
-import os
+﻿import os
 import random
 from threading import Timer
 from gtts import gTTS
@@ -146,6 +146,7 @@ class Vote:
 
     def process_message(self, message: str, author: str):
         tokens = message.split()
+        print("ТЫ ЧЕ ПЕС")
         if len(tokens) > 4 and author == "bandar_ban":
             self.title = tokens[1]
             self.timer = int(tokens[2])
