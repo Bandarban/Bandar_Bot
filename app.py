@@ -1,6 +1,6 @@
 import base64
 
-from flask import Flask, escape, request, render_template
+from flask import Flask, request, render_template
 from bandar_bot.Bandar_bot import run_bot
 import json
 import hashlib
