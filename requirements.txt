@@ -13,7 +13,7 @@ imageio==2.5.0
 imageio-ffmpeg==0.3.0
 moviepy==1.0.0
 numpy==1.15.4
-opencv-python==3.4.4.19
+opencv-python==4.2.0.32
 Pillow==5.3.0
 proglog==0.1.9
 pypiwin32==223
